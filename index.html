@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ㅤ    </title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌺</text></svg>">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: url('background/painting.jpg') center center / cover no-repeat fixed;
+        }
+        
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 13px;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 280px;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #28a745;
+        }
+
+        .popup {
+            font-family: Arial, sans-serif;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 310px;
+            opacity: 0;
+            color: white;
+        }
+
+        .popup.show {
+            display: block;
+            opacity: 1;
+            animation: bounce 0.6s ease-out forwards;
+        }
+
+        @keyframes bounce {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            30% { transform: translate(-50%, -46%) scale(1.1); opacity: 1; }
+            60% { transform: translate(-50%, -50%) scale(0.95); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .popup img {
+            width: 135px;
+            height: 120px;
+            margin-bottom: 10px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .popup-buttons button {
+            flex: 1;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .yes-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .no-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .popup-buttons button:hover {
+            opacity: 0.8;
+        }
+
+        .popup .scroll-content {
+            max-height: 325px;
+            overflow-y: auto;
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* @keyframes bounceShake {
+            0%   { transform: translateY(0); }
+
+            10%  { transform: translateY(-15px); }
+
+            15%  { transform: translateY(-20px) rotate(-15deg); }
+            20%  { transform: translateY(-20px) rotate(15deg); }
+            25%  { transform: translateY(-20px) rotate(-12deg); }
+            30%  { transform: translateY(-20px) rotate(12deg); }
+            35%  { transform: translateY(-20px) rotate(-8deg); }
+            40%  { transform: translateY(-20px) rotate(8deg); }
+            45%  { transform: translateY(-20px) rotate(-5deg); }
+            50%  { transform: translateY(-20px) rotate(5deg); }
+            55%  { transform: translateY(-20px) rotate(0deg); }
+
+            55%  { transform: translateY(0) rotate(0deg); }
+
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .shake-emoji {
+            display: inline-block;
+            animation: bounceShake 3s ease infinite;
+        } */
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="song/Our Love Was Beautiful (Instrumental Version).mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- SCREEN 0: Name Input -->
+    <div class="container" id="mainContainer">
+        <h2>Hello! Kindly <br> Enter Your Name</h2>
+        <div class="input-container">
+            <input type="text" id="nameInput" placeholder="Name">
+            <button onclick="submitName()">Enter</button>
+        </div>
+    </div>
+
+    <!-- WRONG NAME MODAL -->
+    <div id="wrongNameModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+        background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:rgba(255,255,255,0.15); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,0.3); border-radius:15px; padding:30px 20px;
+            text-align:center; width:270px; color:white; animation: fadeInUp 0.5s ease forwards;">
+            
+            <img src="images/snoopy peanuts confused.gif" alt="snoopy" 
+                style="width:130px; height:130px; object-fit:contain; margin-bottom:10px;">
+
+            <h2 style="margin-bottom:10px; font-size:22px;">It's not you 😅</h2>
+            <p style="font-size:14px; line-height:1.7; margin-bottom:20px;">
+                Sorry, this page is not <br> meant for you!
+            </p>
+            <button onclick="closeWrongNameModal()" style="background:#dc3545; color:white; border:none;
+                padding:10px 25px; border-radius:25px; font-size:15px; cursor:pointer;">
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <!-- EARPHONE MODAL -->
+    <div id="earphoneModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+        background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:rgba(255,255,255,0.15); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,0.3); border-radius:15px; padding:30px 20px;
+            text-align:center; width:270px; color:white; animation: fadeInUp 0.5s ease forwards;">
+            
+            <!-- REPLACE THIS WITH YOUR GIF -->
+            <img src="images/snoopy.gif" alt="snoopy" 
+                style="width:145px; height:145px; object-fit:contain; margin-bottom:-5px;">
+
+            <h2 style="margin-bottom:10px; font-size:20px;">Before You Proceed</h2>
+            <p style="font-size:14px; line-height:1.7; margin-bottom:20px;">
+                Please Make sure that your <strong><br>earphone</strong> is plugged in<br>
+                This experience is better with music on!
+            </p>
+            <button onclick="closeEarphoneModal()" style="background:#28a745; color:white; border:none;
+                padding:10px 25px; border-radius:25px; font-size:15px; cursor:pointer;">
+                Got it! ✓
+            </button>
+        </div>
+    </div>
+
+    <!-- SCREEN 1 -->
+    <div class="popup" id="screen1">
+        <img src="images/snoopy greetings.gif" alt="Snoopy"> 
+        <h2 id="screen1Greeting">👋</h2>
+        <p>Sorry it took awhile hehe <br>I hope you're doing well</p>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="showNextPopup()">Proceed</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 2 -->
+    <div class="popup" id="screen2">
+        <img src="images/snoopy confused.gif" alt=""> 
+        <h2 id="screen2Greeting"></h2>
+        <p>It's been a tiring week lately ah<br> hopefully you're doing well :)</p>
+        <div class="popup-buttons">
+            <select id="dropdownResponse" class="yes-btn" style="border-radius: 5px; padding: 5px; height: 35px; font-size: 16px; margin-top: 5px; width: 100%; background-color: white; color: black; border: 1px solid #ccc;">
+                <option value="" disabled selected>Select a response</option>
+                <option value="love">I'm doin' well lately</option>
+                <option value="happy">No, tired lately </option>
+                <option value="excited">I'm literally exhausted </option>
+            </select>
+            <button class="yes-btn" onclick="finalResponse()">Submit</button>
+        </div>
+    </div>
+
+    <!-- LOVE PATH -->
+    <div class="popup" id="screenLove" style="display: none;">
+        <img src="images/peanuts dancing.gif" alt="Heart">
+        <h2>I'm glad you're doing well lei!! :)</h2>
+        <p>It's good to know nga you're doing well lately, especially after the tiring week you've had. 
+            I hope that things continue to improve for you and that you find moments of joy and relaxation amidst the busyness. 
+            Remember to take care of yourself lei and prioritize your well-being. 
+        </p>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="showNextScreen('screenLove2')">Proceed</button>
+        </div>
+    </div>
+    
+    <div class="popup" id="screenLove2" style="display: none;">
+        <img src="images/sleepy peanuts.gif" alt="Heart">
+        <div class="scroll-content">
+            <h2>It's okay to slow down</h2>
+            <p>It's okay to rest and slow down when you need to. Life can be overwhelming at times, and it's important to listen to your body and mind. 
+                Taking breaks and giving yourself permission to relax is essential for your well-being. 
+                Remember that it's not a sign of weakness to take care of yourself; it's a sign of strength and self-awareness. 
+                So, if you're feeling tired or overwhelmed, don't hesitate to slow down, recharge, and prioritize your health and happiness.
+            </p>
+        </div>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="showNextScreen('screenLove3')">Proceed</button>
+        </div>
+    </div>
+
+    <div class="popup" id="screenLove3" style="display: none;">
+        <img src="images/charlie and lucy.gif" alt="Heart">
+        <h2>To this gentle woman,</h2>
+        <div class="scroll-content">
+            <p>    
+                This is a gentle reminder for this Sunday: keep going, 
+                even when life feels heavy and the challenges seem endless. 
+                There will be days when everything feels overwhelming, 
+                when progress seems slow, and when you question your own strength 
+                but please don’t let those moments define you.
+                
+                I truly believe, deep in my heart, that you have the strength 
+                and resilience to overcome every obstacle that comes your way. 
+                No matter how hard things get, trust yourself. 
+                Every step forward, no matter how small, 
+                is still movement toward brighter and better days.
+                
+                When you feel tired, pause but don’t quit. 
+                When you feel unsure, pray. 
+                Lean on God and allow your heart to find peace in His guidance. 
+                He sees your struggles, hears your silent prayers, 
+                and walks with you even when you feel alone.
+                
+                You are stronger than you think, braver than you feel, 
+                and more capable than you sometimes give yourself credit for. 
+                I believe you can rise above every problem 
+                that tries to hold you back.
+                
+                Keep believing. Keep moving. Keep trusting the process. 
+                And never forget you are never alone in this journey.
+                <br>
+                <br>
+                <br>
+                <br>
+                All best
+                <br>
+                Grizzy :)
+            </p>
+        </div>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="closePopupAndReturn()">Done</button>
+        </div>
+    </div>
+
+    <!-- HAPPY PATH -->
+    <div class="popup" id="screenHappy" style="display: none;">
+        <img src="images/snoopy tired.gif" alt="Heart">
+        <h2>It's okay to feel tired lei :))</h2>
+        <p>You've been working hard and pushing through a lot lately, so it's completely understandable that you're feeling tired. 
+            Remember to take some breaks when you can and prioritize yourself. 
+            It's important to listen to your body and give yourself the rest you need :) 
+        </p>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="showNextScreen('screenHappy2')">Proceed</button>
+        </div>
+    </div>
+    
+    <div class="popup" id="screenHappy2" style="display: none;">
+        <img src="images/sleepy peanuts.gif" alt="Heart">
+        <div class="scroll-content">
+            <h2>It's okay to slow down</h2>
+            <p>It's okay to rest and slow down when you need to. Life can be overwhelming at times, and it's important to listen to your body and mind. 
+                Taking breaks and giving yourself permission to relax is essential for your well-being. 
+                Remember that it's not a sign of weakness to take care of yourself; it's a sign of strength and self-awareness. 
+                So, if you're feeling tired or overwhelmed, don't hesitate to slow down, recharge, and prioritize your health and happiness.
+            </p>
+        </div>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="showNextScreen('screenHappy3')">Proceed</button>
+        </div>
+    </div>
+
+    <div class="popup" id="screenHappy3" style="display: none;">
+        <img src="images/charlie and lucy.gif" alt="Heart">
+        <h2>To this gentle woman,</h2>
+        <div class="scroll-content">
+            <p>    
+                This is a gentle reminder for this Sunday: keep going, 
+                even when life feels heavy and the challenges seem endless. 
+                There will be days when everything feels overwhelming, 
+                when progress seems slow, and when you question your own strength 
+                but please don’t let those moments define you.
+                
+                I truly believe, deep in my heart, that you have the strength 
+                and resilience to overcome every obstacle that comes your way. 
+                No matter how hard things get, trust yourself. 
+                Every step forward, no matter how small, 
+                is still movement toward brighter and better days.
+                
+                When you feel tired, pause but don’t quit. 
+                When you feel unsure, pray. 
+                Lean on God and allow your heart to find peace in His guidance. 
+                He sees your struggles, hears your silent prayers, 
+                and walks with you even when you feel alone.
+                
+                You are stronger than you think, braver than you feel, 
+                and more capable than you sometimes give yourself credit for. 
+                I believe you can rise above every problem 
+                that tries to hold you back.
+                
+                Keep believing. Keep moving. Keep trusting the process. 
+                And never forget you are never alone in this journey.
+                <br>
+                <br>
+                <br>
+                <br>
+                All best
+                <br>
+                Grizzy :)
+            </p>
+        </div>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="closePopupAndReturn()">Done</button>
+        </div>
+    </div>
+
+    <!-- EXCITED PATH -->
+    <div class="popup" id="screenExcited" style="display: none;">
+        <img src="images/lucy tired.gif" alt="Heart">
+        <h2>Really? take a break lei :)</h2>
+        <p>I know you're exhausted and I know nga unsa ka kakapoy sa tanan and it's important to take a real break when you can. 
+            Give yourself some time to rest whether if it's taking a nap, going for a walk, or just doing something you enjoy 
+            just to help you feel better and more energized.
+        </p>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="showNextScreen('screenExcited2')">Proceed</button>
+        </div>
+    </div>
+    
+    <div class="popup" id="screenExcited2" style="display: none;">
+        <img src="images/sleepy peanuts.gif" alt="Heart">
+        <div class="scroll-content">
+            <h2>It's okay to slow down</h2>
+            <p>It's okay to rest and slow down when you need to. Life can be overwhelming at times, and it's important to listen to your body and mind. 
+                Taking breaks and giving yourself permission to relax is essential for your well-being. 
+                Remember that it's not a sign of weakness to take care of yourself; it's a sign of strength and self-awareness. 
+                So, if you're feeling tired or overwhelmed, don't hesitate to slow down, recharge, and prioritize your health and happiness.
+            </p>
+        </div>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="showNextScreen('screenExcited3')">Proceed</button>
+        </div>
+    </div>
+
+    <div class="popup" id="screenExcited3" style="display: none;">
+        <img src="images/charlie and lucy.gif" alt="Heart">
+        <h2>To this gentle woman,</h2>
+        <div class="scroll-content">
+            <p>    
+                This is a gentle reminder for this Sunday: keep going, 
+                even when life feels heavy and the challenges seem endless. 
+                There will be days when everything feels overwhelming, 
+                when progress seems slow, and when you question your own strength 
+                but please don’t let those moments define you.
+                
+                I truly believe, deep in my heart, that you have the strength 
+                and resilience to overcome every obstacle that comes your way. 
+                No matter how hard things get, trust yourself. 
+                Every step forward, no matter how small, 
+                is still movement toward brighter and better days.
+                
+                When you feel tired, pause but don’t quit. 
+                When you feel unsure, pray. 
+                Lean on God and allow your heart to find peace in His guidance. 
+                He sees your struggles, hears your silent prayers, 
+                and walks with you even when you feel alone.
+                
+                You are stronger than you think, braver than you feel, 
+                and more capable than you sometimes give yourself credit for. 
+                I believe you can rise above every problem 
+                that tries to hold you back.
+                
+                Keep believing. Keep moving. Keep trusting the process. 
+                And never forget you are never alone in this journey.
+                <br>
+                <br>
+                <br>
+                <br>
+                All best
+                <br>
+                Grizzy :)
+            </p>
+        </div>
+        <div class="popup-buttons">
+            <button class="yes-btn" onclick="closePopupAndReturn()">Done</button>
+        </div>
+    </div>
+
+        <!-- ENDING OVERLAY -->
+        <div id="endingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.75); z-index:9999; justify-content:center; align-items:center; flex-direction:column;">
+            <canvas id="confettiCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none;"></canvas>
+            <div style="text-align:center; color:white; z-index:10000; padding: 20px; animation: fadeInUp 1s ease forwards;">
+                
+                <!-- GIF HERE -->
+                <img src="images/charlie snoopy and lucy.gif" alt="snoopy" 
+                    style="width:130px; height:130px; object-fit:contain; margin-bottom:10px;">
+
+                <h1 style="font-size:28px; margin-bottom:10px;">Happy Sunday Lei!</h1>
+                <p style="font-size:16px; max-width:280px; line-height:1.6;">
+                    You deserve a break from everything you've been handling<br>
+                    I hope today gives you rest and happiness :)
+                </p>
+                <p onclick="restartWebsite()" id="tapText" style="font-size:15px; color:rgba(255,255,255,0.7); 
+                    margin-top:25px; cursor:pointer; opacity:0; animation: fadeInUp 1s ease 3s forwards; letter-spacing:1px;">
+                    Tap here ↩
+                </p>
+            </div>
+        </div>
+
+    <style>
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <script>
+        function restartWebsite() {
+        document.getElementById("endingOverlay").addEventListener("click", restartWebsite);
+        document.getElementById("endingOverlay").style.display = "none";
+        document.getElementById("nameInput").value = "";
+        document.getElementById("screen1Greeting").innerHTML = "HELLO 👋";
+        document.getElementById("screen2Greeting").textContent = "Kamusta kanaman?";
+        document.getElementById("dropdownResponse").value = "";
+        document.getElementById("mainContainer").style.display = "block";
+        userName = "";
+        }
+        let userName = "";
+
+        function submitName() {
+            let name = document.getElementById("nameInput").value.trim().toLowerCase();
+
+            const allowedNames = ["Ashley", "Ash", "Ashle", "Lei", "Le", "ashley", "ash", "ashle", "lei", "le"];
+
+            if (name === "") {
+                alert("Please enter your name!");
+                return;
+            }
+
+            if (!allowedNames.includes(name)) {
+                document.getElementById("wrongNameModal").style.display = "flex";
+                return;
+            }
+
+            userName = name;
+            document.getElementById("screen1Greeting").innerHTML = `HELLO, ${userName.toUpperCase()}! 👋`;
+            document.getElementById("mainContainer").style.display = "none";
+
+            const modal = document.getElementById("earphoneModal");
+            modal.style.display = "flex";
+        }
+
+        function closeWrongNameModal() {
+            document.getElementById("wrongNameModal").style.display = "none";
+            document.getElementById("nameInput").value = "";
+            document.getElementById("nameInput").focus();
+        }
+
+        function closeEarphoneModal() {
+            document.getElementById("earphoneModal").style.display = "none";
+
+            const screen1 = document.getElementById("screen1");
+            screen1.style.display = "block";
+            setTimeout(() => screen1.classList.add("show"), 0);
+
+            let bgMusic = document.getElementById("bgMusic");
+            bgMusic.volume = 0.5;
+            bgMusic.play().catch(error => console.log("Audio playback failed:", error));
+        }
+
+        function showNextPopup() {
+            document.getElementById("screen1").style.display = "none";
+            document.getElementById("screen2Greeting").textContent = `How's you ${userName}?`;
+            const screen2 = document.getElementById("screen2");
+            screen2.style.display = "block";
+            setTimeout(() => screen2.classList.add("show"), 0);
+        }
+
+        function finalResponse() {
+            const response = document.getElementById("dropdownResponse").value;
+            document.querySelectorAll('.popup').forEach(popup => popup.style.display = 'none');
+
+            let selectedScreen = null;
+
+            if (response === "love") {
+                selectedScreen = document.getElementById("screenLove");
+            } else if (response === "happy") {
+                selectedScreen = document.getElementById("screenHappy");
+            } else if (response === "excited") {
+                selectedScreen = document.getElementById("screenExcited");
+            } else {
+                alert("Please select a response before proceeding.");
+                return;
+            }
+
+            selectedScreen.style.display = "block";
+            setTimeout(() => selectedScreen.classList.add("show"), 0);
+        }
+
+        function showNextScreen(screenId) {
+            document.querySelectorAll('.popup').forEach(popup => popup.style.display = 'none');
+            const nextScreen = document.getElementById(screenId);
+            if (nextScreen) {
+                nextScreen.style.display = 'block';
+                setTimeout(() => nextScreen.classList.add("show"), 0);
+            }
+        }
+
+        function closePopupAndReturn() {
+            document.querySelectorAll('.popup').forEach(popup => popup.style.display = 'none');
+
+            const overlay = document.getElementById("endingOverlay");
+            overlay.style.display = "flex";
+
+            startConfetti();
+        }
+
+        function startConfetti() {
+            const canvas = document.getElementById("confettiCanvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ["#ff6b6b", "#ff1493", "#ff7f50", "#ffd700", "#8a2be2", "#00ced1", "#ff69b4"];
+            const shapes = ["circle", "square", "heart"];
+
+            for (let i = 0; i < 150; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    size: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    shape: shapes[Math.floor(Math.random() * shapes.length)],
+                    speed: Math.random() * 3 + 1,
+                    drift: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 4 - 2
+                });
+            }
+
+            function drawHeart(ctx, x, y, size) {
+                ctx.beginPath();
+                ctx.moveTo(x, y + size / 4);
+                ctx.bezierCurveTo(x, y, x - size / 2, y, x - size / 2, y + size / 4);
+                ctx.bezierCurveTo(x - size / 2, y + size / 2, x, y + size * 0.75, x, y + size);
+                ctx.bezierCurveTo(x, y + size * 0.75, x + size / 2, y + size / 2, x + size / 2, y + size / 4);
+                ctx.bezierCurveTo(x + size / 2, y, x, y, x, y + size / 4);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                pieces.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+
+                    if (p.shape === "circle") {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (p.shape === "square") {
+                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    } else if (p.shape === "heart") {
+                        drawHeart(ctx, -p.size / 2, -p.size / 2, p.size);
+                    }
+
+                    ctx.restore();
+
+                    p.y += p.speed;
+                    p.x += p.drift;
+                    p.rotation += p.rotationSpeed;
+
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            window.addEventListener("resize", () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+    </script>
+</body>
+</html>
